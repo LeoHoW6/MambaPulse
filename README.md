@@ -114,7 +114,7 @@ python train.py \
 
 ## 定性分析 (Qualitative Analysis)
 
-![定性分析](Qualitative.jpg)
+![定性分析](图片1.png)
 
 在 VisDrone2019 测试集上的定性结果充分验证了 MambaPulse 在无人机视角下的两大核心优势：
 
