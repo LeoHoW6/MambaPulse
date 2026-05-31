@@ -6,6 +6,8 @@
 
 ## 方法概览
 
+![MambaPulse Architecture](architecture.png)
+
 MambaPulse 由编码器和解码器两部分组成：
 
 **编码器（`encoder.py`）**
