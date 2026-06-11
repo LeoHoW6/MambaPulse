@@ -126,6 +126,37 @@ python train.py \
 2. **细粒度分类与隐式去重 (De-duplication)**
    在尺度差异巨大且目标密集的城市十字路口（如左图），模型能够精准区分语义相近的类别（如客货车 vs. 轿车，摩托车 vs. 自行车），甚至对仅占据少数像素的行人也能保持高召回率。此外，预测的边界框表现出极低的冗余重叠度，这证实了 **MQSI** 模块的有效性：通过双向隐藏状态的传播，MQSI 使得匹配到目标的查询能够隐式地抑制附近的其余查询，从而有效避免了对同一目标的重复预测。
 
+## 实验结果 (Experimental Results)
+
+### Comparative results on the UAVDT dataset
+All methods are trained and evaluated at 640×640 under the COCO-style protocol. Best results are in bold.
+
+| Method | Backbone | FLOPs (G) | Params (M) | AP (%) | AP_small (%) | AP_small^50 (%) |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| YOLOv8-L | CSPDarknet | 165.2 | 43.7 | 16.2 | 10.7 | - |
+| YOLOv12-L | C3k2-A2C2f | 88.9 | 26.5 | 16.9 | 11.6 | - |
+| Faster R-CNN | ResNet-50 | 207.1 | 69.1 | 11.0 | 8.1 | 16.8 |
+| Deformable DETR | ResNet-50 | 173.5 | 40.1 | 16.9 | 11.3 | 22.1 |
+| QueryDet | ResNet-50 | 212.3 | 33.9 | 17.3 | 11.5 | 22.6 |
+| RT-DETR | ResNet-50 | 136.0 | 42.0 | 17.7 | 11.1 | 21.8 |
+| Mamba-YOLO | ODMamba | 156.2 | 57.4 | 17.5 | 11.4 | 22.3 |
+| DINO | ResNet-50 | 245.6 | 48.2 | 18.1 | 12.0 | 23.4 |
+| **MambaSOD (ours)** | **ViM-T** | **187.6** | **74.9** | **18.4** | **13.1** | **25.2** |
+
+### Algorithm efficiency on NVIDIA Jetson AGX Xavier
+AP_small is reported on VisDrone2019.
+
+| Metric | YOLOv5s | YOLOv5s+TRT | Deformable DETR | DINO | MambaSOD (ours) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| Type | CNN | CNN | Transformer | Transformer | Mamba |
+| FLOPs (G) | ~16 | ~16 | ~170 | ~240 | ~180 |
+| Params (M) | 7.2 | 7.2 | 40.1 | 48.2 | 74.9 |
+| PyTorch FPS | 8 | - | ~3.3 | ~1.2 | ~2.6 |
+| TensorRT FPS (FP16) | - | ~30 | - | - | - |
+| Latency (ms) | 125 | ~33 | ~303 | ~830 | ~380 |
+| Peak GPU memory (GB) | 0.6 | ~0.4 | ~5.5 | ~8.0 | ~6.2 |
+| AP_small (%) | 3.2 | 2.8 | 11.6 | 13.4 | 14.1 |
+
 ## 致谢
 
 这项工作以 [Vim](https://github.com/hustvl/Vim)（Zhu等人）和[Mamba](https://github.com/state-spaces/mamba)（Gu 和 Dao）为基础。
